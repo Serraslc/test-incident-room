@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Test Incident Room — ISO 29119-2</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ═══════════════════════════ AUTH SCREEN ═══════════════════════════ -->
+  <div id="auth" class="screen active">
+    <div class="auth-panel">
+      <div class="live-badge">
+        <div class="pulse-dot"></div>
+        <span>LIVE — Release Day Crisis Center</span>
+      </div>
+      <h1>Test Incident Room <span class="version">v3.1</span></h1>
+      <p class="sub" style="margin-bottom:18px;">
+        Create an account or log in to join the class session.
+        Your score will appear on the shared leaderboard.
+      </p>
+
+      <div class="auth-notice" id="auth-notice"></div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Log In</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')">Create Account</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="tab-login">
+        <div class="form-group">
+          <label for="li-user">Username</label>
+          <input type="text" id="li-user" placeholder="your username" autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label for="li-pass">Password</label>
+          <input type="password" id="li-pass" placeholder="••••••" autocomplete="current-password"
+                 onkeydown="if(event.key==='Enter') doLogin()" />
+        </div>
+        <div class="field-err" id="li-err"></div>
+        <div class="btn-row">
+          <button class="btn btn-purple" onclick="doLogin()">Log In</button>
+        </div>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="tab-register" style="display:none;">
+        <div class="form-group">
+          <label for="rg-name">Full name or nickname</label>
+          <input type="text" id="rg-name" placeholder="e.g. Alex K." autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label for="rg-user">Username (letters, numbers, _ only)</label>
+          <input type="text" id="rg-user" placeholder="e.g. alexk" autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label for="rg-pass">Password (min 4 characters)</label>
+          <input type="password" id="rg-pass" placeholder="••••••" autocomplete="new-password"
+                 onkeydown="if(event.key==='Enter') doRegister()" />
+        </div>
+        <div class="field-err" id="rg-err"></div>
+        <div class="btn-row">
+          <button class="btn btn-purple" onclick="doRegister()">Create Account &amp; Play</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ INTRO SCREEN ═══════════════════════════ -->
+  <div id="intro" class="screen">
+    <div class="card">
+      <div class="live-badge">
+        <div class="pulse-dot"></div>
+        <span>LIVE — Release Day Crisis Center</span>
+      </div>
+      <h1>Test Incident Room <span class="version">v3.1</span></h1>
+      <p class="sub">
+        It's release day. 12 incidents are waiting. Apply ISO 29119-2 processes
+        to make the right calls — the clock is ticking.
+      </p>
+      <div class="process-tags">
+        <div class="ptag ptag-purple">
+          <div class="ptag-title">Organizational</div>
+          <div class="ptag-sub">Policy &amp; Strategy</div>
+        </div>
+        <div class="ptag ptag-teal">
+          <div class="ptag-title">Management</div>
+          <div class="ptag-sub">Control &amp; Reporting</div>
+        </div>
+        <div class="ptag ptag-coral">
+          <div class="ptag-title">Dynamic</div>
+          <div class="ptag-sub">Execution &amp; Analysis</div>
+        </div>
+      </div>
+      <div class="user-chip">Logged in as <strong id="intro-username"></strong></div>
+      <div class="btn-row">
+        <button class="btn btn-purple"  onclick="showScreen('difficulty')">Play</button>
+        <button class="btn btn-teal"    onclick="showScreen('leaderboard')">Leaderboard</button>
+        <button class="btn btn-outline" onclick="doLogout()">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ DIFFICULTY SCREEN ═══════════════════════════ -->
+  <div id="difficulty" class="screen">
+    <div class="card">
+      <h2>Choose Difficulty</h2>
+      <p class="sub" style="margin-bottom:20px;">Time per incident and penalty points change accordingly.</p>
+      <div class="diff-grid">
+        <button class="diff-btn diff-easy" onclick="startGame('easy')">
+          <div class="diff-star">★</div>
+          <div class="diff-name" style="color:var(--teal-600)">Easy</div>
+          <div class="diff-info">60 sec / incident</div>
+          <div class="diff-penalty">Penalty: −30 pts</div>
+        </button>
+        <button class="diff-btn diff-mid" onclick="startGame('medium')">
+          <div class="diff-star">★★</div>
+          <div class="diff-name" style="color:var(--purple-800)">Medium</div>
+          <div class="diff-info">35 sec / incident</div>
+          <div class="diff-penalty">Penalty: −60 pts</div>
+        </button>
+        <button class="diff-btn diff-hard" onclick="startGame('hard')">
+          <div class="diff-star">★★★</div>
+          <div class="diff-name" style="color:var(--coral-600)">Hard</div>
+          <div class="diff-info">18 sec / incident</div>
+          <div class="diff-penalty">Penalty: −100 pts</div>
+        </button>
+      </div>
+      <button class="btn btn-outline" style="margin-top:4px;" onclick="showScreen('intro')">← Back</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ GAME ROOM ═══════════════════════════ -->
+  <div id="room" class="screen">
+    <div class="hud">
+      <div class="hud-box hud-purple"><div class="hud-val" id="h-score">0</div><div class="hud-lbl">Score</div></div>
+      <div class="hud-box hud-teal">  <div class="hud-val" id="h-resolved">0/12</div><div class="hud-lbl">Resolved</div></div>
+      <div class="hud-box hud-amber"> <div class="hud-val" id="h-health">100</div><div class="hud-lbl">Health</div></div>
+      <div class="hud-box hud-coral"> <div class="hud-val" id="h-streak">0</div><div class="hud-lbl">Streak</div></div>
+      <div class="hud-box hud-blue">  <div class="hud-val" id="h-time">08:00</div><div class="hud-lbl">Time</div></div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="prog" style="width:0%"></div>
+    </div>
+
+    <div id="feed" style="margin-bottom:10px;"></div>
+
+    <div class="log-label">Activity Log</div>
+    <div class="log-wrap" id="logbox"></div>
+  </div>
+
+  <!-- ═══════════════════════════ RESULT SCREEN ═══════════════════════════ -->
+  <div id="result" class="screen">
+    <div class="card" style="text-align:center; padding:28px 20px;">
+      <div class="result-icon" id="r-icon">★</div>
+      <h1 id="r-title" style="margin-bottom:8px;"></h1>
+      <p class="sub" id="r-msg" style="margin-bottom:20px;"></p>
+      <div class="result-stats">
+        <div class="hud-box hud-purple"><div class="hud-val" id="r-score">0</div><div class="hud-lbl">Score</div></div>
+        <div class="hud-box hud-teal">  <div class="hud-val" id="r-correct">0/12</div><div class="hud-lbl">Correct</div></div>
+        <div class="hud-box hud-amber"> <div class="hud-val" id="r-health">100</div><div class="hud-lbl">Health</div></div>
+        <div class="hud-box hud-coral"> <div class="hud-val" id="r-grade">A+</div><div class="hud-lbl">Grade</div></div>
+      </div>
+      <div id="r-breakdown" class="breakdown"></div>
+      <div class="btn-row" style="justify-content:center; margin-top:16px;">
+        <button class="btn btn-purple"  onclick="showScreen('difficulty')">Play Again</button>
+        <button class="btn btn-teal"    onclick="showScreen('leaderboard')">Leaderboard</button>
+        <button class="btn btn-outline" onclick="showScreen('intro')">Home</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ LEADERBOARD SCREEN ═══════════════════════════ -->
+  <div id="leaderboard" class="screen">
+    <div class="card">
+      <div class="lb-header">
+        <h2>Class Leaderboard</h2>
+        <select id="lb-filter" onchange="renderLB()">
+          <option value="all">All Difficulties</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+      <div id="lb-list"></div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="showScreen('intro')">← Back</button>
+        <button class="btn" onclick="renderLB()">↻ Refresh</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .wrap -->
+
+<!-- ═══════════════════════════ DECISION MODAL ═══════════════════════════ -->
+<!--
+  Bottom-sheet modal. Opens when a player taps an incident.
+  Stays on screen — no scrolling away from the question.
+-->
+<div id="decision-modal" class="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal-inner">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <span id="modal-tag" class="tag tag-crit">CRITICAL</span>
+          <div id="modal-title"></div>
+        </div>
+        <button class="modal-close" onclick="dismissModal()">✕</button>
+      </div>
+
+      <!-- Timer pill -->
+      <div style="margin-bottom:10px;">
+        <span id="modal-timer" class="countdown">35s</span>
+      </div>
+
+      <div id="modal-desc"></div>
+
+      <div class="modal-grid" id="modal-grid"></div>
+
+      <div class="fb" id="modal-fb"></div>
+
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="game.js"></script>
+
+<script>
+  /* Close modal only if tapping the dark overlay (not the sheet itself) */
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('decision-modal')) dismissModal();
+  }
+
+  /* Dismiss only allowed when not mid-answer */
+  function dismissModal() {
+    if (actionLock) return;   // can't dismiss while answer is being shown
+    clearInterval(countdownInterval);
+    closeModal();
+  }
+</script>
+
+</body>
+</html>
