@@ -7,11 +7,23 @@ function getUsers() {
   try { return JSON.parse(localStorage.getItem('tir_users') || '{}'); } catch { return {}; }
 }
 function saveUsers(u) { localStorage.setItem('tir_users', JSON.stringify(u)); }
-function getLeaderboard() {
-  try { return JSON.parse(localStorage.getItem('tir_leaderboard') || '[]'); } catch { return []; }
+async function saveScoreToCloud(entry) {
+  await window.fs.addDoc(
+    window.fs.collection(window.db, "leaderboard"),
+    entry
+  );
 }
-function saveLeaderboard(lb) { localStorage.setItem('tir_leaderboard', JSON.stringify(lb.slice(0, 200))); }
 
+async function getLeaderboardFromCloud() {
+  const q = window.fs.query(
+    window.fs.collection(window.db, "leaderboard"),
+    window.fs.orderBy("score", "desc"),
+    window.fs.limit(30)
+  );
+
+  const snap = await window.fs.getDocs(q);
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
 let currentUser = null;
 let score = 0, health = 100, streak = 0, gameTime = 480;
 let selectedId = null, actionLock = false;
@@ -263,7 +275,7 @@ function showModalFeedback(ok, msg) {
   fb.className='fb '+(ok?'ok':'bad'); fb.textContent=msg; fb.style.display='block';
 }
 
-function endGame() {
+async function endGame() {
   clearInterval(clockInterval); clearInterval(countdownInterval);
   const correct=decisions.filter(d=>d.correct).length;
   const pct=correct/ALL_INCIDENTS.length;
@@ -273,12 +285,23 @@ function endGame() {
   else if (pct>=0.50&&health>=30) { grade='B'; icon='~';title='Room for Growth';              msg='Some critical decisions were wrong. Try again!'; }
   else                            { grade='C'; icon='!';title='Review the Standard';          msg="Too many wrong decisions put the project at risk. Re-read ISO 29119-2."; }
   if (currentUser) {
-    const lb=getLeaderboard();
-    const ts=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    lb.push({ username:currentUser.username, displayName:currentUser.displayName, score,grade,difficulty,correct,health,time:ts,ts:Date.now() });
-    lb.sort((a,b)=>b.score-a.score);
-    saveLeaderboard(lb);
-  }
+  const ts = new Date().toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  await saveScoreToCloud({
+    username: currentUser.username,
+    displayName: currentUser.displayName,
+    score,
+    grade,
+    difficulty,
+    correct,
+    health,
+    time: ts,
+    createdAt: Date.now()
+  });
+}
   showScreen('result');
   document.getElementById('r-icon').textContent    = icon;
   document.getElementById('r-title').textContent   = title;
@@ -294,7 +317,7 @@ function endGame() {
     </div>`).join('');
 }
 
-function renderLB() {
+async function renderLB() {
   const filter=document.getElementById('lb-filter').value;
   let lb=getLeaderboard();
   if (filter!=='all') lb=lb.filter(e=>e.difficulty===filter);
