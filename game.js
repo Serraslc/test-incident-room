@@ -188,6 +188,7 @@ function afterLogin() {
 
 function doLogout() {
   localStorage.removeItem('tir_current_user');
+  sessionStorage.removeItem('tir_last_screen');
   currentUser = null;
   showScreen('auth');
 }
@@ -195,6 +196,10 @@ function doLogout() {
 async function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+
+  if (currentUser && id !== 'auth') {
+    sessionStorage.setItem('tir_last_screen', id);
+  }
 
   if (id === 'leaderboard') {
     await renderLB();
@@ -232,10 +237,11 @@ function startGame(diff) {
       <span class="log-time">00:00</span>
       <span style="color:var(--text-secondary)">Crisis room active — ${diff.toUpperCase()} mode.</span>
     </div>`;
-
+  saveGameState();
   clockInterval = setInterval(() => {
     gameSeconds++;
     document.getElementById('h-time').textContent = formatSeconds(gameSeconds);
+    saveGameState();
   }, 1000);
 }
 
@@ -417,7 +423,7 @@ function resolveAction(incId, shuffledIdx) {
   );
 
   updateHUD();
-
+  saveGameState();
   let fb = action.f;
 
   if (action.c && speedBonus > 0) {
@@ -459,6 +465,67 @@ function formatSeconds(total) {
   const s = total % 60;
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
+function saveGameState() {
+  sessionStorage.setItem('tir_game_state', JSON.stringify({
+    score,
+    health,
+    streak,
+    gameSeconds,
+    difficulty,
+    resolvedIds: Array.from(resolvedSet),
+    decisions
+  }));
+}
+
+function restoreGameState() {
+  const saved = sessionStorage.getItem('tir_game_state');
+  if (!saved) return false;
+
+  try {
+    const state = JSON.parse(saved);
+
+    score = state.score || 0;
+    health = state.health || 100;
+    streak = state.streak || 0;
+    gameSeconds = state.gameSeconds || 0;
+    difficulty = state.difficulty || 'medium';
+
+    timerPerIncident = DIFF_SETTINGS[difficulty].sec;
+    penaltyOnTimeout = DIFF_SETTINGS[difficulty].pen;
+
+    resolvedSet.clear();
+    (state.resolvedIds || []).forEach(id => resolvedSet.add(id));
+
+    decisions.length = 0;
+    (state.decisions || []).forEach(d => decisions.push(d));
+
+    showScreen('room');
+    renderFeed();
+    updateHUD();
+
+    document.getElementById('h-time').textContent = formatSeconds(gameSeconds);
+
+    if (!document.getElementById('logbox').innerHTML.trim()) {
+      document.getElementById('logbox').innerHTML =
+        `<div class="log-entry">
+          <span class="log-time">${formatSeconds(gameSeconds)}</span>
+          <span style="color:var(--text-secondary)">Session restored.</span>
+        </div>`;
+    }
+
+    clearInterval(clockInterval);
+    clockInterval = setInterval(() => {
+      gameSeconds++;
+      document.getElementById('h-time').textContent = formatSeconds(gameSeconds);
+      saveGameState();
+    }, 1000);
+
+    return true;
+  } catch {
+    sessionStorage.removeItem('tir_game_state');
+    return false;
+  }
+}
 
 function addLog(time, msg, ok) {
   const logbox = document.getElementById('logbox');
@@ -485,6 +552,7 @@ async function endGame() {
   gameEnded = true;
 
   clearInterval(clockInterval);
+  sessionStorage.removeItem('tir_game_state');
   clearInterval(countdownInterval);
 
   const correct = decisions.filter(d => d.correct).length;
@@ -644,10 +712,15 @@ window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('intro-username').textContent =
         currentUser.displayName + ' (@' + currentUser.username + ')';
 
-      showScreen('intro');
+      if (restoreGameState()) return;
+
+      const lastScreen = sessionStorage.getItem('tir_last_screen') || 'intro';
+      showScreen(document.getElementById(lastScreen) ? lastScreen : 'intro');
       return;
     } catch {
       localStorage.removeItem('tir_current_user');
+      sessionStorage.removeItem('tir_last_screen');
+      sessionStorage.removeItem('tir_game_state');
     }
   }
 
