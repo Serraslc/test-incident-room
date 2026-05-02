@@ -178,12 +178,19 @@ function doLogin() {
 }
 
 function afterLogin() {
+
+  localStorage.setItem('tir_current_user', JSON.stringify(currentUser));
+
   document.getElementById('intro-username').textContent =
+
     currentUser.displayName + ' (@' + currentUser.username + ')';
+
   showScreen('intro');
+
 }
 
 function doLogout() {
+  localStorage.removeItem('tir_current_user');
   currentUser = null;
   showScreen('auth');
 }
@@ -630,3 +637,14 @@ function renderLeaderboardList(list) {
     `;
   }).join('');
 }
+window.addEventListener('DOMContentLoaded', () => {
+  handleURLParams();
+
+  const saved = localStorage.getItem('tir_current_user');
+  if (saved) {
+    try {
+      currentUser = JSON.parse(saved);
+      afterLogin();
+    } catch {}
+  }
+});
