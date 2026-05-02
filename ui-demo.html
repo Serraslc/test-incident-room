@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incident Room</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+
+body {
+  margin:0;
+  overflow:hidden;
+  font-family:'Poppins',sans-serif;
+  color:#1e293b;
+}
+
+/* 🌊 BACKGROUND */
+#bg {
+  position:fixed;
+  width:100%;
+  height:100%;
+  background: linear-gradient(-45deg,#ffffff,#e0f2fe,#93c5fd,#ffffff);
+  background-size:400% 400%;
+  animation:flow 12s ease infinite;
+  z-index:-3;
+}
+
+@keyframes flow {
+  0% { background-position:0% 50%; }
+  50% { background-position:100% 50%; }
+  100% { background-position:0% 50%; }
+}
+
+/* 💧 BUBBLES */
+.bubble {
+  position:absolute;
+  bottom:-100px;
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%,
+    rgba(255,255,255,0.9),
+    rgba(147,197,253,0.4) 40%,
+    rgba(59,130,246,0.2) 70%,
+    transparent 100%
+  );
+  box-shadow:
+    inset 0 0 12px rgba(255,255,255,0.9),
+    0 0 20px rgba(147,197,253,0.6);
+  animation: rise linear infinite;
+}
+
+@keyframes rise {
+  from { transform: translateY(0) scale(1); opacity:0.9; }
+  to { transform: translateY(-120vh) scale(1.3); opacity:0; }
+}
+
+/* TITLE */
+.title {
+  font-family:'Orbitron',sans-serif;
+  font-size:42px;
+  margin-bottom:20px;
+  color:#1e3a8a;
+  animation:glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow:0 0 5px #93c5fd; }
+  to { text-shadow:0 0 20px #60a5fa; }
+}
+
+/* CENTER */
+.wrap {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+/* PANEL */
+.panel {
+  background:rgba(255,255,255,0.75);
+  backdrop-filter:blur(12px);
+  padding:40px;
+  border-radius:20px;
+  width:350px;
+  text-align:center;
+  box-shadow:0 10px 40px rgba(0,0,0,0.1);
+}
+
+/* INPUT */
+input {
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+  border:none;
+  background:white;
+}
+
+/* BUTTON */
+.btn {
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  margin-top:10px;
+  font-weight:500;
+}
+
+.btn-main {
+  background:linear-gradient(45deg,#60a5fa,#1d4ed8);
+  color:white;
+}
+
+.btn-outline {
+  border:1px solid #60a5fa;
+  background:transparent;
+  color:#1d4ed8;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="bg"></div>
+
+<!-- 💧 BUBBLES -->
+<script>
+for(let i=0;i<25;i++){
+  let b=document.createElement("div");
+  b.className="bubble";
+  let size=20+Math.random()*50;
+  b.style.width=size+"px";
+  b.style.height=size+"px";
+  b.style.left=Math.random()*100+"vw";
+  b.style.animationDuration=(10+Math.random()*10)+"s";
+  document.body.appendChild(b);
+}
+</script>
+
+<div class="wrap">
+
+  <div class="panel">
+
+    <div class="title">INCIDENT ROOM</div>
+
+    <input id="li-user" placeholder="Email (örn: test@test.com)">
+    <input id="li-pass" type="password" placeholder="Password (min 6)">
+
+    <button class="btn btn-main" onclick="doLogin()">Login</button>
+    <button class="btn btn-outline" onclick="doRegister()">Register</button>
+
+  </div>
+
+</div>
+
+<!-- 🔥 FIREBASE (ZORUNLU) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "BURAYA_API_KEY",
+  authDomain: "BURAYA_AUTH_DOMAIN",
+  projectId: "BURAYA_PROJECT_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+window.auth = firebase.auth();
+
+window.authFns = {
+  signInWithEmailAndPassword: (auth, email, pass) =>
+    auth.signInWithEmailAndPassword(email, pass),
+
+  createUserWithEmailAndPassword: (auth, email, pass) =>
+    auth.createUserWithEmailAndPassword(email, pass),
+
+  signOut: (auth) => auth.signOut(),
+
+  updateProfile: (user, data) => user.updateProfile(data)
+};
+</script>
+
+<!-- SENİN OYUN -->
+<script src="data.js"></script>
+<script src="game.js"></script>
+
+</body>
+</html>
