@@ -111,11 +111,11 @@ function switchAuthTab(tab) {
   document.getElementById('rg-err').style.display = 'none';
 }
 
-function doRegister() {
+async function doRegister() {
   const name = document.getElementById('rg-name').value.trim();
-  const user = document.getElementById('rg-user').value.trim().toLowerCase().replace(/\s/g, '');
+  const user = document.getElementById('rg-user').value.trim().toLowerCase().replace(/\s/g,'');
   const pass = document.getElementById('rg-pass').value;
-  const err = document.getElementById('rg-err');
+  const err  = document.getElementById('rg-err');
 
   err.style.display = 'none';
 
@@ -125,37 +125,46 @@ function doRegister() {
     return;
   }
 
-  if (pass.length < 4) {
-    err.textContent = 'Password must be at least 4 characters.';
+  if (pass.length < 6) {
+    err.textContent = 'Password must be at least 6 characters.';
     err.style.display = 'block';
     return;
   }
 
-  if (!/^[a-z0-9_]+$/.test(user)) {
-    err.textContent = 'Username: letters, numbers, underscores only.';
+  const email = user + "@testincidentroom.com";
+
+  try {
+    const cred = await window.authFns.createUserWithEmailAndPassword(window.auth, email, pass);
+
+    await window.authFns.updateProfile(cred.user, {
+      displayName: name
+    });
+
+    currentUser = {
+      uid: cred.user.uid,
+      username: user,
+      displayName: name
+    };
+
+    afterLogin();
+
+  } catch (e) {
+    console.error(e);
+
+    if (e.code === 'auth/email-already-in-use') {
+      err.textContent = 'Username already exists.';
+    } else {
+      err.textContent = 'Registration failed.';
+    }
+
     err.style.display = 'block';
-    return;
   }
-
-  const users = getUsers();
-
-  if (users[user]) {
-    err.textContent = 'Username already taken.';
-    err.style.display = 'block';
-    return;
-  }
-
-  users[user] = { displayName: name, password: pass };
-  saveUsers(users);
-
-  currentUser = { username: user, displayName: name };
-  afterLogin();
 }
 
-function doLogin() {
+async function doLogin() {
   const user = document.getElementById('li-user').value.trim().toLowerCase();
   const pass = document.getElementById('li-pass').value;
-  const err = document.getElementById('li-err');
+  const err  = document.getElementById('li-err');
 
   err.style.display = 'none';
 
@@ -165,16 +174,24 @@ function doLogin() {
     return;
   }
 
-  const users = getUsers();
+  const email = user + "@testincidentroom.com";
 
-  if (!users[user] || users[user].password !== pass) {
+  try {
+    const cred = await window.authFns.signInWithEmailAndPassword(window.auth, email, pass);
+
+    currentUser = {
+      uid: cred.user.uid,
+      username: user,
+      displayName: cred.user.displayName || user
+    };
+
+    afterLogin();
+
+  } catch (e) {
+    console.error(e);
     err.textContent = 'Incorrect username or password.';
     err.style.display = 'block';
-    return;
   }
-
-  currentUser = { username: user, displayName: users[user].displayName };
-  afterLogin();
 }
 
 function afterLogin() {
@@ -186,9 +203,11 @@ function afterLogin() {
   showScreen('intro');
 }
 
-function doLogout() {
-  localStorage.removeItem('tir_current_user');
-  sessionStorage.removeItem('tir_last_screen');
+async function doLogout() {
+  try {
+    await window.authFns.signOut(window.auth);
+  } catch {}
+
   currentUser = null;
   showScreen('auth');
 }

@@ -233,7 +233,13 @@
     limit,
     onSnapshot
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    updateProfile,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   const firebaseConfig = {
     apiKey: "AIzaSyDR1cnnC_EJfOGnaN_uaX4eqGyrniPV_rQ",
     authDomain: "seng436-972ab.firebaseapp.com",
@@ -245,9 +251,19 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
   window.db = db;
+  window.auth = auth;
+
   window.fs = { collection, addDoc, getDocs, query, orderBy, limit, onSnapshot };
+
+  window.authFns = {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    updateProfile,
+    signOut
+  };
 </script>
 
 <script src="data.js"></script>
