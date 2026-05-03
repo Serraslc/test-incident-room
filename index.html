@@ -4,9 +4,113 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Test Incident Room — ISO 29119-2</title>
+
   <link rel="stylesheet" href="style.css" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    #bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(-45deg, #ffffff, #e0f2fe, #93c5fd, #ffffff);
+      background-size: 400% 400%;
+      animation: flow 12s ease infinite;
+      z-index: -3;
+    }
+
+    @keyframes flow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .bubble {
+      position: fixed;
+      bottom: -100px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%,
+        rgba(255,255,255,0.9),
+        rgba(147,197,253,0.4) 40%,
+        rgba(59,130,246,0.2) 70%,
+        transparent 100%
+      );
+      box-shadow:
+        inset 0 0 12px rgba(255,255,255,0.9),
+        0 0 20px rgba(147,197,253,0.6);
+      animation: rise linear infinite;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    @keyframes rise {
+      from { transform: translateY(0) scale(1); opacity: 0.9; }
+      to { transform: translateY(-120vh) scale(1.3); opacity: 0; }
+    }
+
+    .auth-panel,
+    .card {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+
+    #auth h1,
+    #intro h1 {
+      font-family: 'Orbitron', sans-serif;
+      color: #1e3a8a;
+      animation: titleGlow 2s infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      from { text-shadow: 0 0 5px #93c5fd; }
+      to { text-shadow: 0 0 20px #60a5fa; }
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      background: rgba(255,255,255,0.9);
+    }
+
+    .btn-purple,
+    .btn-teal {
+      background: linear-gradient(45deg, #60a5fa, #1d4ed8);
+      color: white;
+      border-color: #1d4ed8;
+    }
+
+    .btn-purple:hover,
+    .btn-teal:hover {
+      background: linear-gradient(45deg, #3b82f6, #1e40af);
+    }
+  </style>
 </head>
+
 <body>
+
+<div id="bg"></div>
+
+<script>
+  for (let i = 0; i < 25; i++) {
+    const b = document.createElement("div");
+    b.className = "bubble";
+    const size = 20 + Math.random() * 50;
+    b.style.width = size + "px";
+    b.style.height = size + "px";
+    b.style.left = Math.random() * 100 + "vw";
+    b.style.animationDuration = (10 + Math.random() * 10) + "s";
+    b.style.animationDelay = (-Math.random() * 10) + "s";
+    document.body.appendChild(b);
+  }
+</script>
 
 <div class="wrap">
 
@@ -16,7 +120,9 @@
         <div class="pulse-dot"></div>
         <span>LIVE — Release Day Crisis Center</span>
       </div>
-      <h1>Test Incident Room <span class="version">v3.2</span></h1>
+
+      <h1>Test Incident Room <span class="version">v4.0</span></h1>
+
       <p class="sub" style="margin-bottom:18px;">
         Create an account or log in to join the class session.
         Your score will appear on the shared leaderboard.
@@ -34,12 +140,15 @@
           <label for="li-user">Username</label>
           <input type="text" id="li-user" placeholder="your username" autocomplete="username" />
         </div>
+
         <div class="form-group">
           <label for="li-pass">Password</label>
           <input type="password" id="li-pass" placeholder="••••••" autocomplete="current-password"
                  onkeydown="if(event.key==='Enter') doLogin()" />
         </div>
+
         <div class="field-err" id="li-err"></div>
+
         <div class="btn-row">
           <button class="btn btn-purple" onclick="doLogin()">Log In</button>
         </div>
@@ -50,16 +159,20 @@
           <label for="rg-name">Full name or nickname</label>
           <input type="text" id="rg-name" placeholder="e.g. Alex K." autocomplete="name" />
         </div>
+
         <div class="form-group">
           <label for="rg-user">Username (letters, numbers, _ only)</label>
           <input type="text" id="rg-user" placeholder="e.g. alexk" autocomplete="username" />
         </div>
+
         <div class="form-group">
-          <label for="rg-pass">Password (min 4 characters)</label>
+          <label for="rg-pass">Password (min 6 characters)</label>
           <input type="password" id="rg-pass" placeholder="••••••" autocomplete="new-password"
                  onkeydown="if(event.key==='Enter') doRegister()" />
         </div>
+
         <div class="field-err" id="rg-err"></div>
+
         <div class="btn-row">
           <button class="btn btn-purple" onclick="doRegister()">Create Account &amp; Play</button>
         </div>
@@ -73,26 +186,33 @@
         <div class="pulse-dot"></div>
         <span>LIVE — Release Day Crisis Center</span>
       </div>
-      <h1>Test Incident Room <span class="version">v3.2</span></h1>
+
+      <h1>Test Incident Room <span class="version">v4.0</span></h1>
+
       <p class="sub">
         It's release day. 12 incidents are waiting. Apply ISO 29119-2 processes
         to make the right calls — the clock is ticking.
       </p>
+
       <div class="process-tags">
         <div class="ptag ptag-purple">
           <div class="ptag-title">Organizational</div>
           <div class="ptag-sub">Policy &amp; Strategy</div>
         </div>
+
         <div class="ptag ptag-teal">
           <div class="ptag-title">Management</div>
           <div class="ptag-sub">Control &amp; Reporting</div>
         </div>
+
         <div class="ptag ptag-coral">
           <div class="ptag-title">Dynamic</div>
           <div class="ptag-sub">Execution &amp; Analysis</div>
         </div>
       </div>
+
       <div class="user-chip">Logged in as <strong id="intro-username"></strong></div>
+
       <div class="btn-row">
         <button class="btn btn-purple" onclick="showScreen('difficulty')">Play</button>
         <button class="btn btn-teal" onclick="showScreen('leaderboard')">Leaderboard</button>
@@ -105,6 +225,7 @@
     <div class="card">
       <h2>Choose Difficulty</h2>
       <p class="sub" style="margin-bottom:20px;">Time per incident and penalty points change accordingly.</p>
+
       <div class="diff-grid">
         <button class="diff-btn diff-easy" onclick="startGame('easy')">
           <div class="diff-star">★</div>
@@ -112,12 +233,14 @@
           <div class="diff-info">60 sec / incident</div>
           <div class="diff-penalty">Penalty: −30 pts</div>
         </button>
+
         <button class="diff-btn diff-mid" onclick="startGame('medium')">
           <div class="diff-star">★★</div>
           <div class="diff-name" style="color:var(--purple-800)">Medium</div>
           <div class="diff-info">35 sec / incident</div>
           <div class="diff-penalty">Penalty: −60 pts</div>
         </button>
+
         <button class="diff-btn diff-hard" onclick="startGame('hard')">
           <div class="diff-star">★★★</div>
           <div class="diff-name" style="color:var(--coral-600)">Hard</div>
@@ -125,17 +248,37 @@
           <div class="diff-penalty">Penalty: −100 pts</div>
         </button>
       </div>
+
       <button class="btn btn-outline" style="margin-top:4px;" onclick="showScreen('intro')">← Back</button>
     </div>
   </div>
 
   <div id="room" class="screen">
     <div class="hud">
-      <div class="hud-box hud-purple"><div class="hud-val" id="h-score">0</div><div class="hud-lbl">Score</div></div>
-      <div class="hud-box hud-teal"><div class="hud-val" id="h-resolved">0/12</div><div class="hud-lbl">Resolved</div></div>
-      <div class="hud-box hud-amber"><div class="hud-val" id="h-health">100</div><div class="hud-lbl">Health</div></div>
-      <div class="hud-box hud-coral"><div class="hud-val" id="h-streak">0</div><div class="hud-lbl">Streak</div></div>
-      <div class="hud-box hud-blue"><div class="hud-val" id="h-time">00:00</div><div class="hud-lbl">Time</div></div>
+      <div class="hud-box hud-purple">
+        <div class="hud-val" id="h-score">0</div>
+        <div class="hud-lbl">Score</div>
+      </div>
+
+      <div class="hud-box hud-teal">
+        <div class="hud-val" id="h-resolved">0/12</div>
+        <div class="hud-lbl">Resolved</div>
+      </div>
+
+      <div class="hud-box hud-amber">
+        <div class="hud-val" id="h-health">100</div>
+        <div class="hud-lbl">Health</div>
+      </div>
+
+      <div class="hud-box hud-coral">
+        <div class="hud-val" id="h-streak">0</div>
+        <div class="hud-lbl">Streak</div>
+      </div>
+
+      <div class="hud-box hud-blue">
+        <div class="hud-val" id="h-time">00:00</div>
+        <div class="hud-lbl">Time</div>
+      </div>
     </div>
 
     <div class="progress-bar">
@@ -151,15 +294,35 @@
   <div id="result" class="screen">
     <div class="card" style="text-align:center; padding:28px 20px;">
       <div class="result-icon" id="r-icon">★</div>
+
       <h1 id="r-title" style="margin-bottom:8px;"></h1>
+
       <p class="sub" id="r-msg" style="margin-bottom:20px;"></p>
+
       <div class="result-stats">
-        <div class="hud-box hud-purple"><div class="hud-val" id="r-score">0</div><div class="hud-lbl">Score</div></div>
-        <div class="hud-box hud-teal"><div class="hud-val" id="r-correct">0/12</div><div class="hud-lbl">Correct</div></div>
-        <div class="hud-box hud-amber"><div class="hud-val" id="r-health">100</div><div class="hud-lbl">Health</div></div>
-        <div class="hud-box hud-coral"><div class="hud-val" id="r-grade">A+</div><div class="hud-lbl">Grade</div></div>
+        <div class="hud-box hud-purple">
+          <div class="hud-val" id="r-score">0</div>
+          <div class="hud-lbl">Score</div>
+        </div>
+
+        <div class="hud-box hud-teal">
+          <div class="hud-val" id="r-correct">0/12</div>
+          <div class="hud-lbl">Correct</div>
+        </div>
+
+        <div class="hud-box hud-amber">
+          <div class="hud-val" id="r-health">100</div>
+          <div class="hud-lbl">Health</div>
+        </div>
+
+        <div class="hud-box hud-coral">
+          <div class="hud-val" id="r-grade">A+</div>
+          <div class="hud-lbl">Grade</div>
+        </div>
       </div>
+
       <div id="r-breakdown" class="breakdown"></div>
+
       <div class="btn-row" style="justify-content:center; margin-top:16px;">
         <button class="btn btn-purple" onclick="showScreen('difficulty')">Play Again</button>
         <button class="btn btn-teal" onclick="showScreen('leaderboard')">Leaderboard</button>
@@ -201,12 +364,14 @@
 <div id="decision-modal" class="modal-overlay" onclick="handleOverlayClick(event)">
   <div class="modal-inner">
     <div class="modal-handle"></div>
+
     <div class="modal-body">
       <div class="modal-header">
         <div class="modal-header-left">
           <span id="modal-tag" class="tag tag-crit">CRITICAL</span>
           <div id="modal-title"></div>
         </div>
+
         <button class="modal-close" onclick="dismissModal()">✕</button>
       </div>
 
@@ -223,6 +388,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
   import {
     getFirestore,
     collection,
@@ -231,8 +397,11 @@
     query,
     orderBy,
     limit,
-    onSnapshot
+    onSnapshot,
+    doc,
+    setDoc
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
   import {
     getAuth,
     createUserWithEmailAndPassword,
@@ -240,6 +409,7 @@
     updateProfile,
     signOut
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
   const firebaseConfig = {
     apiKey: "AIzaSyDR1cnnC_EJfOGnaN_uaX4eqGyrniPV_rQ",
     authDomain: "seng436-972ab.firebaseapp.com",
@@ -256,7 +426,17 @@
   window.db = db;
   window.auth = auth;
 
-  window.fs = { collection, addDoc, getDocs, query, orderBy, limit, onSnapshot };
+  window.fs = {
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    orderBy,
+    limit,
+    onSnapshot,
+    doc,
+    setDoc
+  };
 
   window.authFns = {
     createUserWithEmailAndPassword,

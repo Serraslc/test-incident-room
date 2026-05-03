@@ -392,3 +392,107 @@ input:focus { border-color:var(--purple-400); box-shadow:0 0 0 2px rgba(127,119,
 #leaderboard .lb-row .lb-score {
   color: #3C3489 !important;
 }
+#result .card,
+#leaderboard .card {
+  background: rgba(255, 255, 255, 0.92);
+  color: #1f2937;
+}
+
+#result h1,
+#leaderboard h2 {
+  color: #1e3a8a !important;
+}
+
+#result .sub {
+  color: #374151 !important;
+}
+
+.result-icon {
+  color: #2563eb !important;
+}
+
+.breakdown-title {
+  color: #374151 !important;
+}
+
+.btn-outline {
+  color: #1e3a8a !important;
+  border: 1px solid #93c5fd !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+.lb-col {
+  background: rgba(255,255,255,0.9) !important;
+  color: #1f2937 !important;
+  border: 1px solid rgba(147,197,253,0.7);
+}
+
+.lb-col h3 {
+  color: #1e3a8a !important;
+}
+
+.lb-row {
+  background: #eef2ff !important;
+  color: #1f2937 !important;
+}
+
+.lb-name {
+  color: #312e81 !important;
+}
+
+.lb-meta {
+  color: #4b5563 !important;
+}
+
+.lb-score {
+  color: #312e81 !important;
+}
+
+.lb-grade {
+  color: #6b7280 !important;
+}
+
+
+
+/* Leaderboard soft fade-in */
+#leaderboard.screen.active .card {
+  animation: leaderboardFadeIn 0.45s ease-out both;
+}
+
+#leaderboard.screen.active .lb-col {
+  animation: leaderboardColumnIn 0.5s ease-out both;
+}
+
+#leaderboard.screen.active .lb-col:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+#leaderboard.screen.active .lb-col:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+#leaderboard.screen.active .lb-col:nth-child(3) {
+  animation-delay: 0.19s;
+}
+
+@keyframes leaderboardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes leaderboardColumnIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

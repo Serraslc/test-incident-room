@@ -20,10 +20,11 @@ function saveUsers(users) {
 }
 
 async function saveScoreToCloud(entry) {
-  await window.fs.addDoc(
-    window.fs.collection(window.db, "leaderboard"),
-    entry
-  );
+  const docId = `${entry.username}_${entry.difficulty}`;
+
+  const ref = window.fs.doc(window.db, "leaderboard", docId);
+
+  await window.fs.setDoc(ref, entry);
 }
 
 async function getLeaderboardFromCloud() {
@@ -65,6 +66,8 @@ let clockInterval = null;
 let countdownInterval = null;
 let incCountdown = 0;
 let currentShuffled = [];
+let ACTIVE_INCIDENTS = [];
+const QUESTION_COUNT = 12;
 
 function shuffleArray(arr) {
   const a = arr.slice();
@@ -74,7 +77,9 @@ function shuffleArray(arr) {
   }
   return a;
 }
-
+function pickRandomIncidents(pool, count) {
+  return shuffleArray(pool).slice(0, count);
+}
 function handleURLParams() {
   const params = new URLSearchParams(window.location.search);
   const qrUser = params.get('user');
@@ -239,6 +244,9 @@ function startGame(diff) {
   actionLock = false;
   gameEnded = false;
 
+  const pool = INCIDENT_POOLS[diff] || EASY_INCIDENTS;
+  ACTIVE_INCIDENTS = pickRandomIncidents(pool, QUESTION_COUNT);
+
   resolvedSet.clear();
   decisions.length = 0;
 
@@ -266,7 +274,7 @@ function startGame(diff) {
 
 function renderFeed() {
   const feed = document.getElementById('feed');
-  const remaining = ALL_INCIDENTS.filter(i => !resolvedSet.has(i.id));
+  const remaining = ACTIVE_INCIDENTS.filter(i => !resolvedSet.has(i.id));
 
   if (remaining.length === 0) {
     feed.innerHTML =
@@ -298,7 +306,7 @@ function selectIncident(id) {
   clearInterval(countdownInterval);
   selectedId = id;
 
-  const inc = ALL_INCIDENTS.find(i => i.id === id);
+  const inc = ACTIVE_INCIDENTS.find(i => i.id === id);
   currentShuffled = shuffleArray(inc.actions);
 
   document.getElementById('modal-title').textContent = inc.title;
@@ -359,7 +367,7 @@ function timeoutIncident(id) {
 
   actionLock = true;
 
-  const inc = ALL_INCIDENTS.find(i => i.id === id);
+  const inc = ACTIVE_INCIDENTS.find(i => i.id === id);
 
   score = Math.max(0, score - penaltyOnTimeout);
   health = Math.max(0, health - Math.round(penaltyOnTimeout / 3));
@@ -385,7 +393,7 @@ function timeoutIncident(id) {
     closeModal();
     renderFeed();
 
-    if (resolvedSet.size >= ALL_INCIDENTS.length) endGame();
+    if (resolvedSet.size >= ACTIVE_INCIDENTS.length) endGame();
   }, TIMEOUT_REVIEW_DELAY);
 }
 
@@ -395,7 +403,7 @@ function resolveAction(incId, shuffledIdx) {
   clearInterval(countdownInterval);
   actionLock = true;
 
-  const inc = ALL_INCIDENTS.find(i => i.id === incId);
+  const inc = ACTIVE_INCIDENTS.find(i => i.id === incId);
   const action = currentShuffled[shuffledIdx];
   const grid = document.getElementById('modal-grid');
 
@@ -462,17 +470,18 @@ function resolveAction(incId, shuffledIdx) {
     closeModal();
     renderFeed();
 
-    if (resolvedSet.size >= ALL_INCIDENTS.length) endGame();
+    if (resolvedSet.size >= ACTIVE_INCIDENTS.length) endGame();
   }, reviewDelay);
 }
 
 function updateHUD() {
   document.getElementById('h-score').textContent = score;
-  document.getElementById('h-resolved').textContent = resolvedSet.size + '/12';
+  document.getElementById('h-resolved').textContent =
+    resolvedSet.size + '/' + ACTIVE_INCIDENTS.length;
   document.getElementById('h-health').textContent = health;
   document.getElementById('h-streak').textContent = streak;
   document.getElementById('prog').style.width =
-    Math.round(resolvedSet.size / ALL_INCIDENTS.length * 100) + '%';
+    Math.round(resolvedSet.size / ACTIVE_INCIDENTS.length * 100) + '%';
 }
 
 function getTimeStr() {
@@ -575,7 +584,7 @@ async function endGame() {
   clearInterval(countdownInterval);
 
   const correct = decisions.filter(d => d.correct).length;
-  const pct = correct / ALL_INCIDENTS.length;
+  const pct = correct / ACTIVE_INCIDENTS.length;
 
   let grade, icon, title, msg;
 
@@ -609,6 +618,7 @@ async function endGame() {
 
     try {
       await saveScoreToCloud({
+        uid: currentUser.uid,
         username: currentUser.username,
         displayName: currentUser.displayName,
         score,
@@ -633,7 +643,8 @@ async function endGame() {
   document.getElementById('r-title').textContent = title;
   document.getElementById('r-msg').textContent = msg;
   document.getElementById('r-score').textContent = score;
-  document.getElementById('r-correct').textContent = correct + '/12';
+  document.getElementById('r-correct').textContent =
+    correct + '/' + ACTIVE_INCIDENTS.length;
   document.getElementById('r-health').textContent = health;
   document.getElementById('r-grade').textContent = grade;
 
