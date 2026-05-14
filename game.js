@@ -58,7 +58,11 @@ const DIFF_SETTINGS = {
   medium: { sec: 35, pen: 60 },
   hard: { sec: 18, pen: 100 }
 };
-
+const INCIDENT_POOLS = {
+  easy: window.EASY_INCIDENTS || EASY_INCIDENTS,
+  medium: window.MEDIUM_INCIDENTS || MEDIUM_INCIDENTS,
+  hard: window.HARD_INCIDENTS || HARD_INCIDENTS
+};
 const resolvedSet = new Set();
 const decisions = [];
 
@@ -212,9 +216,12 @@ async function doLogout() {
   try {
     await window.authFns.signOut(window.auth);
   } catch {}
-
+  localStorage.removeItem('tir_current_user');
+  sessionStorage.removeItem('tir_last_screen');
+  sessionStorage.removeItem('tir_game_state');
   currentUser = null;
   showScreen('auth');
+  
 }
 
 async function showScreen(id) {
@@ -742,7 +749,7 @@ window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('intro-username').textContent =
         currentUser.displayName + ' (@' + currentUser.username + ')';
 
-      if (restoreGameState()) return;
+      //if (restoreGameState()) return;
 
       const lastScreen = sessionStorage.getItem('tir_last_screen') || 'intro';
       showScreen(document.getElementById(lastScreen) ? lastScreen : 'intro');

@@ -496,3 +496,72 @@ input:focus { border-color:var(--purple-400); box-shadow:0 0 0 2px rgba(127,119,
     transform: translateY(0);
   }
 }
+.difficulty-card,
+.diff-card,
+.level-card,
+#difficulty button,
+#difficulty .card,
+#difficulty [onclick] {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  position: relative;
+  z-index: 10;
+}
+
+#bg,
+.bubble,
+.bubbles,
+.background,
+.bg-animation {
+  pointer-events: none !important;
+}
+/* Final contrast fix */
+.card h1,
+.card h2,
+.card h3,
+.auth-panel h1,
+.auth-panel h2,
+.auth-panel h3 {
+  color: #1e3a8a !important;
+}
+
+.sub,
+.card .sub,
+.auth-panel .sub,
+.form-group label,
+.diff-info,
+.diff-penalty,
+.hud-lbl {
+  color: #374151 !important;
+  opacity: 1 !important;
+}
+
+.diff-btn {
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: #111827 !important;
+  border: 2px solid rgba(147, 197, 253, 0.9) !important;
+}
+
+.diff-star {
+  color: #1f2937 !important;
+}
+
+.diff-easy .diff-name {
+  color: #047857 !important;
+}
+
+.diff-mid .diff-name {
+  color: #4338ca !important;
+}
+
+.diff-hard .diff-name {
+  color: #c2410c !important;
+}
+
+input {
+  color: #111827 !important;
+}
+
+input::placeholder {
+  color: #9ca3af !important;
+}
