@@ -52,7 +52,24 @@ let gameEnded = false;
 let difficulty = 'medium';
 let timerPerIncident = 35;
 let penaltyOnTimeout = 60;
+let selectedDifficulty = 'medium';
 
+function selectDifficulty(diff, el) {
+  selectedDifficulty = diff;
+
+  document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.classList.remove('selected-diff');
+  });
+
+  el.classList.add('selected-diff');
+
+  const label = diff.charAt(0).toUpperCase() + diff.slice(1);
+  document.getElementById('selected-diff-name').textContent = label;
+}
+
+function startSelectedDifficulty() {
+  startGame(selectedDifficulty);
+}
 const DIFF_SETTINGS = {
   easy: { sec: 60, pen: 30 },
   medium: { sec: 35, pen: 60 },

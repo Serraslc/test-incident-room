@@ -565,3 +565,43 @@ input {
 input::placeholder {
   color: #9ca3af !important;
 }
+.diff-btn {
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border 0.35s ease;
+  overflow: hidden;
+}
+
+.diff-btn:hover {
+  transform: translateY(-4px);
+}
+
+.diff-btn.selected-diff {
+  transform: translateY(-8px) scale(1.06) rotateY(8deg);
+  border: 3px solid #4f46e5 !important;
+  box-shadow: 0 18px 40px rgba(79, 70, 229, 0.25);
+}
+
+.diff-desc {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #374151;
+  opacity: 0;
+  max-height: 0;
+  transition: opacity 0.25s ease, max-height 0.25s ease;
+}
+
+.diff-btn.selected-diff .diff-desc {
+  opacity: 1;
+  max-height: 80px;
+}
+
+.selected-diff-panel {
+  margin-top: 18px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(238, 242, 255, 0.95);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #1e3a8a;
+  font-weight: 600;
+  text-align: center;
+}

@@ -231,29 +231,90 @@
       <p class="sub" style="margin-bottom:20px;">Time per incident and penalty points change accordingly.</p>
 
       <div class="diff-grid">
-        <button class="diff-btn diff-easy" onclick="startGame('easy')">
+
+        <button class="diff-btn diff-easy selected-diff"
+                onclick="selectDifficulty('easy', this)">
+
           <div class="diff-star">★</div>
-          <div class="diff-name" style="color:var(--teal-600)">Easy</div>
+
+          <div class="diff-name" style="color:var(--teal-600)">
+            Easy
+          </div>
+
           <div class="diff-info">60 sec / incident</div>
-          <div class="diff-penalty">Penalty: −30 pts</div>
+
+          <div class="diff-penalty">
+            Penalty: −30 pts
+          </div>
+
+          <div class="diff-desc">
+            Basic concepts, terminology, and guided ISO 29119 process decisions.
+          </div>
+
         </button>
 
-        <button class="diff-btn diff-mid" onclick="startGame('medium')">
+        <button class="diff-btn diff-mid"
+                onclick="selectDifficulty('medium', this)">
+
           <div class="diff-star">★★</div>
-          <div class="diff-name" style="color:var(--purple-800)">Medium</div>
+
+          <div class="diff-name" style="color:var(--purple-800)">
+            Medium
+          </div>
+
           <div class="diff-info">35 sec / incident</div>
-          <div class="diff-penalty">Penalty: −60 pts</div>
+
+          <div class="diff-penalty">
+            Penalty: −60 pts
+          </div>
+
+          <div class="diff-desc">
+            Risk handling, incident management, reporting, and execution control.
+          </div>
+
         </button>
 
-        <button class="diff-btn diff-hard" onclick="startGame('hard')">
+        <button class="diff-btn diff-hard"
+                onclick="selectDifficulty('hard', this)">
+
           <div class="diff-star">★★★</div>
-          <div class="diff-name" style="color:var(--coral-600)">Hard</div>
+
+          <div class="diff-name" style="color:var(--coral-600)">
+            Hard
+          </div>
+
           <div class="diff-info">18 sec / incident</div>
-          <div class="diff-penalty">Penalty: −100 pts</div>
+
+          <div class="diff-penalty">
+            Penalty: −100 pts
+          </div>
+
+          <div class="diff-desc">
+            Critical release decisions, compliance, security, and governance pressure.
+          </div>
+
         </button>
+
       </div>
 
-      <button class="btn btn-outline" style="margin-top:4px;" onclick="showScreen('intro')">← Back</button>
+      <div class="selected-diff-panel" id="selected-diff-panel">
+        Selected mission:
+        <strong id="selected-diff-name">Easy</strong>
+      </div>
+
+      <div class="btn-row" style="margin-top:16px;">
+
+        <button class="btn btn-purple"
+                onclick="startSelectedDifficulty()">
+          Start Mission
+        </button>
+
+        <button class="btn btn-outline"
+                onclick="showScreen('intro')">
+          ← Back
+        </button>
+
+      </div>
     </div>
   </div>
 
