@@ -339,6 +339,13 @@ function selectIncident(id) {
   document.getElementById('modal-desc').textContent = inc.desc;
   document.getElementById('modal-fb').style.display = 'none';
 
+  const standardsBox = document.getElementById('modal-standards');
+  if (standardsBox) {
+    standardsBox.innerHTML = (inc.standards || [])
+      .map(s => `<span class="std-badge">${s}</span>`)
+      .join('');
+  }
+
   const timerPill = document.getElementById('modal-timer');
   timerPill.textContent = timerPerIncident + 's';
   timerPill.className = 'countdown';

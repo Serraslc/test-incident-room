@@ -605,3 +605,22 @@ input::placeholder {
   font-weight: 600;
   text-align: center;
 }
+
+/* ── ISO Standards badges ── */
+.modal-standards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 18px;
+}
+
+.std-badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  background: rgba(96, 165, 250, 0.14);
+  border: 1px solid rgba(96, 165, 250, 0.38);
+  color: #1d4ed8;
+}
