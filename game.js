@@ -342,7 +342,7 @@ function selectIncident(id) {
   const standardsBox = document.getElementById('modal-standards');
   if (standardsBox) {
     standardsBox.innerHTML = (inc.standards || [])
-      .map(s => `<span class="std-badge">${s}</span>`)
+      .map(s => `<span class="standard-badge">${s}</span>`)
       .join('');
   }
 
